@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import "./App.css";
+import { useQuery } from "@tanstack/react-query";
 
 export const App = () => {
-  const [isLoading, setIsLoading] = useState<Boolean>(true);
-  const [number, setNumber] = useState<number>(0);
+  // const [error, setError] = useState<string>();
+
 
   const getRandomNumber = async (): Promise<number> => {
     const data = await fetch(
@@ -13,23 +14,23 @@ export const App = () => {
     return resp;
   };
 
-  useEffect(() => {
-    getRandomNumber().then((resp) => setNumber(resp));
-  }, []);
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [number])
+  const query = useQuery({
+    queryKey: ['randomNumber'], 
+    queryFn: getRandomNumber,
+  });
+
+  console.log(query);
   
 
   return (
     <>
-      {isLoading ? (
+      {query.isLoading ? (
         <p>Loading...</p>
       ) : (
         <div>
           <h1>Vite + React</h1>
-          <p>Numero aleatorio: {number}</p>
+          <p>Numero aleatorio: {query.data}</p>
         </div>
       )}
     </>
